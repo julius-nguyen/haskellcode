@@ -18,9 +18,9 @@ happiness (n:ns) set1 set2
   | Set.member n set2 = -1 + happiness ns set1 set2 
   | otherwise = happiness ns set1 set2
 
---happinessF :: [Int] -> Set.Set Int -> Set.Set Int -> Int 
---happinessF set1 set2 = foldr ((+) . cond) 0
---  where cond x
---            | Set.member x set1 = 1
---            | Set.member x set2 = -1
---            | otherwise = 0
+happinessF :: [Int] -> Set.Set Int -> Set.Set Int -> Int 
+happinessF (x:xs) set1 set2 = foldr ((+) . cond) 0 (x:xs)
+  where cond x
+            | Set.member x set1 = 1
+            | Set.member x set2 = -1
+            | otherwise = 0
