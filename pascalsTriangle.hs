@@ -32,7 +32,7 @@ stringRow (n:ns) = (show n) ++ " " ++ stringRow ns
 main :: IO ()
 main = do
   x <- getLine
-  let pTriangle = pascalsTriangle (read x)
+  let pTriangle = pascalsTriangle ((read x) - 1)
   
   do 
     --mapM_ (print . stringRow) pTriangle
