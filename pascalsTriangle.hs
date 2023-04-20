@@ -29,7 +29,7 @@ stringRow [] = ""
 stringRow (n:ns) = (show n) ++ " " ++ stringRow ns 
 
 
---main :: IO ()
+main :: IO ()
 main = do
   x <- getLine
   let pTriangle = pascalsTriangle (read x)
