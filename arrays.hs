@@ -12,5 +12,5 @@ main =
     do 
         n <- readLn
         input <- replicateM n getLine
-        putStrLn (map read (flatten (map words input)))
-        putStrLn (show (sum (intlist (map words strpoints))))  
+        let intlist = map read (flatten (map words input))
+        putStrLn (show (sum intlist))
