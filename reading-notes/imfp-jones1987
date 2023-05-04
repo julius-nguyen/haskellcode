@@ -1,0 +1,176 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{tikz-qtree}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{amssymb}
+\usepackage[UKenglish]{babel}
+\usepackage{hyperref}
+
+% define syntax hightlighting style 
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{hlstyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+\lstset{style=hlstyle,mathescape=true}
+
+% title sec 
+\title{The Implementation of Functional Programming Languages, Notes}
+\date{\today}
+\author{Julius Nguyen}
+
+\begin{document}
+
+% create title 
+\maketitle 
+
+\section{Preface}
+
+A functional program consists of expressions that are evaluated using a technique called
+\textbf{graph reduction}
+
+\[
+  f x = (x + 1) * (x - 1)
+\]
+
+consists of \textbf{reducible expressions} that can be represented by the following graph: 
+
+Let $x = 4$ Then $f 4 :=$
+
+\begin{center}
+\scalebox{0.75}{
+  \begin{tikzpicture}[
+        baseline,
+        align=center,
+        level distance=39,
+        sibling distance=10pt] 
+        \Tree [.$*$ [.$+$ 4 1 ] [.$-$ 4 1 ] ]
+  \end{tikzpicture}}
+\end{center}
+
+Which can be reduced to 
+
+\begin{center}
+\scalebox{0.75}{
+    \begin{tikzpicture}[
+      baseline,
+      align=center,
+      level distance=39,
+      sibling distance=10pt]
+      \Tree [.$*$ 5 3 ]
+    \end{tikzpicture}}
+\end{center}
+
+Which in turn evaluates to 
+
+\[ 15 \]
+
+\section{The Lambda Calculus}
+
+
+\subsection{The syntax of Lambda Calculus}
+Lambda Calculus has no 'built-in' operators, but for convenience we can define operators which 
+can be defined in terms of Lambda Calculus.  
+
+
+A function can take several arguments, e.g. 
+
+\[ \lambda x.\lambda y.f x y \] 
+
+where $f$ is a function. 
+
+We can rewrite functions 
+with multiple arguments as functions that take single arguments. 
+
+\[ \lambda x. (\lambda y. (f x) y ) \]
+
+The first version should be preferred, since it is the more readible one. 
+
+For convenience, we accept built-in functions such as: 
+
+\begin{lstlisting}[mathescape]
+  IF TRUE E$_t$ E$_f$ $\rightarrow$ E$_t$
+  IF FALSE E$_t$ E$_f$ $\rightarrow$ E$_f$
+
+  HEAD (CONS a b) $\rightarrow$ a 
+  TAIL (CONS a b) $\rightarrow$ b
+\end{lstlisting}
+
+CONS is short for CONSTRUCT. 
+
+The built-in functions like \texttt{CONS, HEAD} and \texttt{TAIL} can expressed
+by lambda expressions. 
+
+\begin{lstlisting}[mathescape]
+  CONS = ($\lambda a.\lambda b.\lambda f. f a b$)
+  HEAD = ($\lambda c.c (\lambda a.\lambda b.a$) 
+  TAIL = ($\lambda c.c (\lambda a.\lambda b.b$)
+\end{lstlisting}
+
+% add derivation of HEAD
+
+The syntax of a lambda expression in BNF looks like this: 
+
+\begin{lstlisting}[mathescape]
+  <exp> :: = <constant>                   built-in constants
+        | <variable>                      variable names
+        | <exp> <exp>                     applications
+        | $\lambda$ <variable> . <exp>    lambda abstractions
+\end{lstlisting}
+
+Lower-case letters stand for variables, upper-case letters stand for lambda expressions.
+
+\subsection{The semantics of Lambda Calculus}
+
+A variable can be \textbf{bound} or \textbf{free}. A variable is bound, when it is taken as argument
+by $\lambda$ ("$\lambda$ x"). Otherwise the variable is free. 
+
+We have different operations to manipulate $\lambda$ expressions. 
+
+\begin{itemize}
+  \item $\beta$-conversion: we reduce the term by replacing the variable by an argument that is provided as an 
+    input to an expression 
+
+    \[ (\lambda x.+ x 1) 4\]
+
+    \[ [x := 4] \]
+    
+    \[ + 4 1  \]
+
+    \[ 5 \]
+
+  \item $\beta$-abstraction: backwards operation of the $\beta$-reduction 
+
+    \[ + 4 1 \leftarrow (\lambda x. + x 1) 4 \]
+
+    To show that we can convert back and forwards, we can write:
+
+    \[ + 4 1 \leftrightarrow[\beta] (\lambda x. + x 1) 4 \]
+
+  \item $\alpha$ conversion: used to change names, when two or more expressions are equivalent 
+
+    \[ \lambda x. + x 1 \leftrightarrow[\alpha] (\lambda y. + y 1) \]
+\end{itemize}
+
+\end{document}
